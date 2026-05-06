@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استبيان الغرامات والإخطارات الضريبية - تكاليف | الاستشارات الضريبية في الإمارات</title>
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SheetJS -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1e4a3b 0%, #2d6a4e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .main-header {
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 50px 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-bottom: 3px solid #52b788;
+        }
+        
+        .company-badge {
+            background: rgba(82, 183, 136, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            border: 1px solid #52b788;
+            color: white;
+        }
+        
+        .uae-badge {
+            background: linear-gradient(135deg, #00732f 0%, #c8102e 100%);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-bottom: 2rem;
+            background-color: #f8faf8;
+            border: 1px solid #e4f2e4;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #1e4a3b 0%, #2d6a4e 100%);
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-bottom: 2px solid #52b788;
+        }
+        
+        .btn-custom {
+            background: #52b788;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            background: #2d6a4e;
+            transform: scale(1.05);
+            color: white;
+        }
+        
+        .btn-excel {
+            background: #1e4a3b;
+            color: white;
+            border: 2px solid #52b788;
+        }
+        
+        .btn-excel:hover {
+            background: #2d6a4e;
+            color: white;
+        }
+        
+        .btn-pdf {
+            background: #4a6b5a;
+            color: white;
+            border: 2px solid #52b788;
+        }
+        
+        .form-label {
+            color: #2d6a4e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e4f2e4;
+            border-radius: 10px;
+            padding: 0.75rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #52b788;
+            box-shadow: 0 0 0 0.2rem rgba(82, 183, 136, 0.25);
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e4f2e4;
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-color: #52b788;
+        }
+        
+        .section-title {
+            color: #1e4a3b;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #52b788;
+            display: inline-block;
+        }
+        
+        .section-title i {
+            color: #52b788;
+            margin-left: 10px;
+        }
+        
+        .info-box {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #52b788;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #ffc107;
+        }
+        
+        .penalty-card {
+            background: #fff8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #dc3545;
+        }
+        
+        .notice-card {
+            background: #e8f0fe;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-right: 4px solid #007bff;
+        }
+        
+        .declaration-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.2rem;
+            border: 1px solid #dee2e6;
+            margin-top: 1.5rem;
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-right: 4px;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+            border-radius: 50px 50px 0 0;
+            border-top: 3px solid #52b788;
+        }
+        
+        .footer-links {
+            color: #e4f2e4;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links:hover {
+            color: #52b788;
+        }
+        
+        .contact-item {
+            margin-bottom: 10px;
+            color: #e4f2e4;
+        }
+        
+        .contact-item i {
+            color: #52b788;
+            margin-left: 10px;
+            width: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(82, 183, 136, 0.2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            color: #52b788;
+            transition: all 0.3s ease;
+            border: 1px solid #52b788;
+        }
+        
+        .social-icon:hover {
+            background: #52b788;
+            color: #0e3b2c;
+            transform: translateY(-3px);
+        }
+        
+        .nav-tabs-custom {
+            border-bottom: 3px solid #52b788;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #1e4a3b 0%, #2d6a4e 100%);
+            border-radius: 50px;
+            padding: 0.5rem;
+        }
+        
+        .nav-tabs-custom .nav-link {
+            color: white !important;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs-custom .nav-link i {
+            color: white;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+            color: #1e4a3b !important;
+            background: #52b788;
+            border: 2px solid white;
+        }
+        
+        .preview-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 2px solid #52b788;
+            margin-bottom: 1.5rem;
+        }
+        
+        .preview-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed #e4f2e4;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .preview-label {
+            font-weight: 600;
+            color: #1e4a3b;
+            width: 45%;
+        }
+        
+        .preview-value {
+            color: #2d6a4e;
+            width: 55%;
+            text-align: left;
+        }
+        
+        .status-paid {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            color: #ffc107;
+            font-weight: 600;
+        }
+        
+        .status-objection {
+            color: #17a2b8;
+            font-weight: 600;
+        }
+        
+        .status-appealed {
+            color: #6f42c1;
+            font-weight: 600;
+        }
+        
+        .currency-badge {
+            background: #52b788;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* PDF Export Container */
+        #pdf-export-container {
+            position: fixed;
+            top: -99999px;
+            left: -99999px;
+            width: 800px;
+            background: white;
+            z-index: 9999;
+            padding: 30px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .pdf-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            direction: rtl;
+        }
+        
+        .pdf-cover {
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .pdf-section-title {
+            color: #1e4a3b;
+            font-size: 20px;
+            font-weight: 800;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #52b788;
+        }
+        
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+            border: 1px solid #52b788;
+        }
+        
+        .pdf-table th {
+            background: #1e4a3b;
+            color: white;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .pdf-table td {
+            padding: 6px;
+            border: 1px solid #e4f2e4;
+            text-align: center;
+        }
+        
+        .pdf-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #0e3b2c 0%, #1b5e3f 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        
+        .add-btn {
+            background: #52b788;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .add-btn:hover {
+            background: #2d6a4e;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="main-header text-center no-print">
+        <div class="container">
+            <span class="company-badge mb-3">
+                <i class="fas fa-file-invoice-dollar me-2"></i>تكاليف | حلول أعمال ذكية
+                <span class="uae-badge"><i class="fas fa-flag me-1"></i>الإمارات العربية المتحدة</span>
+            </span>
+            <h1 class="display-4 fw-bold mt-3" style="color: white;">
+                <i class="fas fa-exclamation-triangle me-3"></i>
+                استبيان الغرامات والإخطارات الضريبية
+            </h1>
+            <p class="lead" style="color: white;">خدمة الاستشارات الضريبية في الإمارات - جمع بيانات الغرامات والإخطارات الواردة من الهيئة الاتحادية للضرائب</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs-custom nav-fill" id="myTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="data-entry-tab" data-bs-toggle="tab" data-bs-target="#dataEntry" type="button" role="tab">
+                    <i class="fas fa-edit me-2"></i> استبيان المعلومات
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview" type="button" role="tab">
+                    <i class="fas fa-eye me-2"></i> معاينة التقرير
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Tab 1: Data Entry -->
+            <div class="tab-pane fade show active" id="dataEntry" role="tabpanel">
+                <!-- بيانات الشركة الأساسية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-building"></i> بيانات الشركة الأساسية</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">اسم الشركة (بالعربية)</label>
+                            <input type="text" class="form-control" id="companyNameAr" placeholder="أدخل اسم الشركة بالعربية">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">اسم الشركة (بالإنجليزية)</label>
+                            <input type="text" class="form-control" id="companyNameEn" placeholder="Company Name in English">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label required-field">الرقم الضريبي (TRN)</label>
+                            <input type="text" class="form-control" id="taxRegistrationNumber" placeholder="مثال: 100000000000000">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">رقم السجل التجاري</label>
+                            <input type="text" class="form-control" id="commercialLicense" placeholder="رقم الرخصة التجارية">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">الإمارة</label>
+                            <select class="form-select" id="emirate">
+                                <option value="">اختر الإمارة</option>
+                                <option value="أبوظبي">أبوظبي</option>
+                                <option value="دبي">دبي</option>
+                                <option value="الشارقة">الشارقة</option>
+                                <option value="عجمان">عجمان</option>
+                                <option value="أم القيوين">أم القيوين</option>
+                                <option value="رأس الخيمة">رأس الخيمة</option>
+                                <option value="الفجيرة">الفجيرة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">جهة الاتصال الرئيسية</label>
+                            <input type="text" class="form-control" id="contactPerson" placeholder="اسم المسؤول عن الضرائب">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" id="clientEmail" placeholder="email@company.com">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">رقم الهاتف</label>
+                            <input type="tel" class="form-control" id="clientPhone" placeholder="+971 XX XXX XXXX">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">تاريخ التعبئة</label>
+                            <input type="date" class="form-control" id="submissionDate" value="2026-03-25">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ملخص الغرامات والإخطارات -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-chart-pie"></i> ملخص الغرامات والإخطارات</h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">إجمالي عدد الغرامات المستلمة</label>
+                            <input type="number" class="form-control" id="totalPenalties" placeholder="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">إجمالي قيمة الغرامات</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="totalPenaltiesValue" placeholder="0.00">
+                                <span class="input-group-text">درهم</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">قيمة الغرامات المسددة</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="penaltiesPaid" placeholder="0.00">
+                                <span class="input-group-text">درهم</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">قيمة الغرامات المستحقة (غير المسددة)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="penaltiesDue" placeholder="0.00">
+                                <span class="input-group-text">درهم</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">عدد الإخطارات المستلمة</label>
+                            <input type="number" class="form-control" id="totalNotices" placeholder="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">الإخطارات التي تم الرد عليها</label>
+                            <input type="number" class="form-control" id="noticesResponded" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="warning-box mt-2">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        <strong>تنبيه:</strong> الغرامات الضريبية في الإمارات تشمل غرامات التأخير في التسجيل، التأخير في تقديم الإقرارات، التأخير في السداد، والمخالفات الأخرى وفق قانون الضريبة.
+                    </div>
+                </div>
+
+                <!-- قائمة الغرامات الضريبية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-money-bill-wave"></i> قائمة الغرامات الضريبية</h3>
+                    <div class="info-box mb-3">
+                        <i class="fas fa-info-circle text-success me-2"></i>
+                        <strong>ملاحظة:</strong> يرجى إدخال تفاصيل كل غرامة ضريبية مستلمة. يمكن إضافة عدد غير محدود من الغرامات.
+                    </div>
+                    <div id="penaltiesContainer">
+                        <!-- سيتم إضافة الغرامات هنا ديناميكياً -->
+                    </div>
+                    <button type="button" class="btn btn-sm add-btn mt-2" onclick="addPenalty()">
+                        <i class="fas fa-plus me-1"></i> إضافة غرامة ضريبية
+                    </button>
+                </div>
+
+                <!-- قائمة الإخطارات الضريبية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-envelope-open-text"></i> قائمة الإخطارات الضريبية</h3>
+                    <div id="noticesContainer">
+                        <!-- سيتم إضافة الإخطارات هنا ديناميكياً -->
+                    </div>
+                    <button type="button" class="btn btn-sm add-btn mt-2" onclick="addNotice()">
+                        <i class="fas fa-plus me-1"></i> إضافة إخطار ضريبي
+                    </button>
+                </div>
+
+                <!-- الاعتراضات والتقاضي -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-gavel"></i> الاعتراضات والتقاضي</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">هل تم تقديم اعتراض على أي غرامة؟</label>
+                            <select class="form-select" id="hasObjection" onchange="toggleObjectionFields()">
+                                <option value="لا">لا</option>
+                                <option value="نعم - قيد الدراسة">نعم - قيد الدراسة</option>
+                                <option value="نعم - مقبول جزئياً">نعم - مقبول جزئياً</option>
+                                <option value="نعم - مرفوض">نعم - مرفوض</option>
+                                <option value="نعم - قيد التقاضي">نعم - قيد التقاضي</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3" id="objectionValueDiv" style="display: none;">
+                            <label class="form-label">قيمة الغرامات المتنازع عليها</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="objectionValue" placeholder="0.00">
+                                <span class="input-group-text">درهم</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3" id="objectionDetailsDiv" style="display: none;">
+                            <label class="form-label">تفاصيل الاعتراضات والإجراءات المتخذة</label>
+                            <textarea class="form-control" id="objectionDetails" rows="2" placeholder="اذكر تفاصيل الاعتراضات، المرحلة الحالية، المستندات المقدمة..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الإجراءات المتخذة لتصحيح المخالفات -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-clipboard-list"></i> الإجراءات المتخذة لتصحيح المخالفات</h3>
+                    <div class="mb-3">
+                        <label class="form-label">الإجراءات التي تم اتخاذها لتصحيح المخالفات</label>
+                        <textarea class="form-control" id="correctiveActions" rows="3" placeholder="مثال: تعديل الإقرارات، سداد الغرامات، تحديث بيانات التسجيل، تحسين أنظمة المحاسبة..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">الضوابط الداخلية المطبقة لمنع تكرار المخالفات</label>
+                        <textarea class="form-control" id="internalControls" rows="2" placeholder="مثال: تدريب الموظفين، أنظمة مراجعة داخلية، الاستعانة بمستشارين..."></textarea>
+                    </div>
+                </div>
+
+                <!-- معلومات إضافية -->
+                <div class="section-card">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> معلومات إضافية</h3>
+                    <div class="mb-3">
+                        <label class="form-label">أي معلومات إضافية حول الغرامات والإخطارات</label>
+                        <textarea class="form-control" id="additionalInfo" rows="3" placeholder="أي معلومات إضافية مثل: صعوبات في السداد، طلبات تقسيط، تواصل مع الهيئة..."></textarea>
+                    </div>
+                </div>
+
+                <!-- إقرار وتوقيع -->
+                <div class="declaration-box">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="declarationCheck">
+                                <label class="form-check-label" for="declarationCheck">
+                                    أقر بأن جميع البيانات المقدمة في هذا الاستبيان صحيحة وكاملة، وأتحمل مسؤولية دقتها. وأوافق على استخدامها لغرض تقديم الاستشارات الضريبية.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">اسم المقر</label>
+                            <input type="text" class="form-control" id="declarantName" placeholder="الاسم الكامل">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">المنصب</label>
+                            <input type="text" class="form-control" id="declarantPosition" placeholder="المسمى الوظيفي">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" class="form-control" id="declarationDate" value="2026-03-25">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 mb-4">
+                    <button class="btn btn-custom btn-lg" onclick="refreshPreview()"><i class="fas fa-sync-alt me-2"></i> تحديث المعاينة</button>
+                    <button class="btn btn-custom btn-lg mx-2" onclick="resetForm()"><i class="fas fa-undo me-2"></i> إعادة تعيين</button>
+                </div>
+            </div>
+
+            <!-- Tab 2: Preview -->
+            <div class="tab-pane fade" id="preview" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-file-alt me-2"></i> معاينة تقرير الغرامات والإخطارات الضريبية</div>
+                    <div class="card-body" id="previewContent"></div>
+                </div>
+                <div class="text-center mb-4 no-print">
+                    <button class="btn btn-excel btn-lg mx-2" onclick="exportToExcel()"><i class="fas fa-file-excel me-2"></i> تصدير (Excel)</button>
+                    <button class="btn btn-pdf btn-lg mx-2" onclick="exportToPDF(event)"><i class="fas fa-file-pdf me-2"></i> تصدير التقرير (PDF)</button>
+                    <button class="btn btn-custom btn-lg mx-2" onclick="window.print()"><i class="fas fa-print me-2"></i> طباعة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer no-print">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 style="color: #52b788;">تكاليف - حلول أعمال ذكية</h5>
+                    <p style="color: #e4f2e4;">نقدم خدمات الاستشارات الضريبية في الإمارات العربية المتحدة.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 style="color: #52b788;"><i class="fas fa-address-card me-2"></i>معلومات الاتصال</h5>
+                    <div class="contact-item"><i class="fas fa-map-marker-alt"></i> دبي - الإمارات العربية المتحدة</div>
+                    <div class="contact-item"><i class="fas fa-phone-alt"></i><a href="tel:+97145678901" class="footer-links">+971 4 567 8901</a></div>
+                    <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:tax@takalief.com" class="footer-links">tax@takalief.com</a></div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 style="color: #52b788;"><i class="fas fa-share-alt me-2"></i>تابعنا على</h5>
+                    <div class="text-center">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-3">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0" style="color: #e4f2e4;"><i class="fas fa-copyright me-2" style="color: #52b788;"></i>2026 تكاليف - جميع الحقوق محفوظة</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="pdf-export-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let penaltyCounter = 0;
+        let noticeCounter = 0;
+        
+        function toggleObjectionFields() {
+            var hasObjection = document.getElementById('hasObjection').value;
+            var objectionValueDiv = document.getElementById('objectionValueDiv');
+            var objectionDetailsDiv = document.getElementById('objectionDetailsDiv');
+            
+            if (hasObjection !== 'لا') {
+                objectionValueDiv.style.display = 'block';
+                objectionDetailsDiv.style.display = 'block';
+            } else {
+                objectionValueDiv.style.display = 'none';
+                objectionDetailsDiv.style.display = 'none';
+            }
+            refreshPreview();
+        }
+        
+        function addPenalty() {
+            penaltyCounter++;
+            var container = document.getElementById('penaltiesContainer');
+            var newPenalty = document.createElement('div');
+            newPenalty.className = 'penalty-card';
+            newPenalty.id = 'penalty_' + penaltyCounter;
+            newPenalty.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">رقم الغرامة</label>
+                        <input type="text" class="form-control" placeholder="رقم الإخطار" id="penalty_number_${penaltyCounter}">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">تاريخ الإصدار</label>
+                        <input type="date" class="form-control" id="penalty_date_${penaltyCounter}">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">نوع الضريبة</label>
+                        <select class="form-select" id="penalty_taxType_${penaltyCounter}">
+                            <option value="ضريبة القيمة المضافة">ضريبة القيمة المضافة</option>
+                            <option value="ضريبة الشركات">ضريبة الشركات</option>
+                            <option value="ضريبة الاستقطاع">ضريبة الاستقطاع</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">سبب الغرامة</label>
+                        <select class="form-select" id="penalty_reason_${penaltyCounter}">
+                            <option value="تأخير التسجيل">تأخير التسجيل</option>
+                            <option value="تأخير تقديم الإقرار">تأخير تقديم الإقرار</option>
+                            <option value="تأخير السداد">تأخير السداد</option>
+                            <option value="خطأ في الإقرار">خطأ في الإقرار</option>
+                            <option value="عدم تقديم الإقرار">عدم تقديم الإقرار</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">قيمة الغرامة</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" placeholder="0.00" id="penalty_value_${penaltyCounter}">
+                            <span class="input-group-text">درهم</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">حالة السداد</label>
+                        <select class="form-select" id="penalty_status_${penaltyCounter}">
+                            <option value="مسددة">مسددة</option>
+                            <option value="غير مسددة">غير مسددة</option>
+                            <option value="قيد الاعتراض">قيد الاعتراض</option>
+                            <option value="مجدولة">مجدولة</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <button type="button" class="btn btn-sm remove-btn" onclick="removePenalty(${penaltyCounter})">
+                            <i class="fas fa-trash me-1"></i> حذف الغرامة
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newPenalty);
+            refreshPreview();
+        }
+        
+        function removePenalty(id) {
+            var element = document.getElementById('penalty_' + id);
+            if (element) {
+                element.remove();
+                refreshPreview();
+            }
+        }
+        
+        function addNotice() {
+            noticeCounter++;
+            var container = document.getElementById('noticesContainer');
+            var newNotice = document.createElement('div');
+            newNotice.className = 'notice-card';
+            newNotice.id = 'notice_' + noticeCounter;
+            newNotice.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">رقم الإخطار</label>
+                        <input type="text" class="form-control" placeholder="رقم الإخطار" id="notice_number_${noticeCounter}">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">تاريخ الإخطار</label>
+                        <input type="date" class="form-control" id="notice_date_${noticeCounter}">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">نوع الإخطار</label>
+                        <select class="form-select" id="notice_type_${noticeCounter}">
+                            <option value="طلب مستندات">طلب مستندات</option>
+                            <option value="إشعار مراجعة">إشعار مراجعة</option>
+                            <option value="تعديل مقترح">تعديل مقترح</option>
+                            <option value="إنذار">إنذار</option>
+                            <option value="تقييم ضريبي">تقييم ضريبي</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">تاريخ الرد المطلوب</label>
+                        <input type="date" class="form-control" id="notice_deadline_${noticeCounter}">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label">حالة الرد</label>
+                        <select class="form-select" id="notice_status_${noticeCounter}">
+                            <option value="تم الرد">تم الرد</option>
+                            <option value="قيد الإعداد">قيد الإعداد</option>
+                            <option value="لم يتم الرد">لم يتم الرد</option>
+                            <option value="طلب تمديد">طلب تمديد</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">تفاصيل الإخطار والإجراءات المتخذة</label>
+                        <textarea class="form-control" rows="2" id="notice_details_${noticeCounter}" placeholder="اذكر تفاصيل الإخطار والإجراءات المتخذة"></textarea>
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <button type="button" class="btn btn-sm remove-btn" onclick="removeNotice(${noticeCounter})">
+                            <i class="fas fa-trash me-1"></i> حذف الإخطار
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newNotice);
+            refreshPreview();
+        }
+        
+        function removeNotice(id) {
+            var element = document.getElementById('notice_' + id);
+            if (element) {
+                element.remove();
+                refreshPreview();
+            }
+        }
+        
+        function getFieldValue(id, defaultValue) {
+            if (defaultValue === undefined) defaultValue = '—';
+            var element = document.getElementById(id);
+            return element && element.value.trim() !== '' ? element.value.trim() : defaultValue;
+        }
+        
+        function getPenaltiesData() {
+            var penalties = [];
+            for (var i = 1; i <= penaltyCounter; i++) {
+                var element = document.getElementById('penalty_' + i);
+                if (element) {
+                    penalties.push({
+                        number: getFieldValue('penalty_number_' + i),
+                        date: getFieldValue('penalty_date_' + i),
+                        taxType: getFieldValue('penalty_taxType_' + i),
+                        reason: getFieldValue('penalty_reason_' + i),
+                        value: getFieldValue('penalty_value_' + i),
+                        status: getFieldValue('penalty_status_' + i)
+                    });
+                }
+            }
+            return penalties;
+        }
+        
+        function getNoticesData() {
+            var notices = [];
+            for (var i = 1; i <= noticeCounter; i++) {
+                var element = document.getElementById('notice_' + i);
+                if (element) {
+                    notices.push({
+                        number: getFieldValue('notice_number_' + i),
+                        date: getFieldValue('notice_date_' + i),
+                        type: getFieldValue('notice_type_' + i),
+                        deadline: getFieldValue('notice_deadline_' + i),
+                        status: getFieldValue('notice_status_' + i),
+                        details: getFieldValue('notice_details_' + i)
+                    });
+                }
+            }
+            return notices;
+        }
+        
+        function refreshPreview() {
+            var penalties = getPenaltiesData();
+            var notices = getNoticesData();
+            
+            var penaltiesHtml = '';
+            if (penalties.length === 0) {
+                penaltiesHtml = '<div class="text-muted text-center py-3">لا توجد غرامات ضريبية مسجلة</div>';
+            } else {
+                penaltiesHtml = '<div class="preview-item"><span class="preview-label"><strong>رقم الغرامة</strong></span><span class="preview-value"><strong>التاريخ</strong></span><span class="preview-value"><strong>النوع</strong></span><span class="preview-value"><strong>السبب</strong></span><span class="preview-value"><strong>القيمة</strong></span><span class="preview-value"><strong>الحالة</strong></span></div>';
+                for (var i = 0; i < penalties.length; i++) {
+                    var p = penalties[i];
+                    var statusClass = p.status === 'مسددة' ? 'status-paid' : (p.status === 'غير مسددة' ? 'status-pending' : 'status-objection');
+                    penaltiesHtml += `<div class="preview-item"><span class="preview-label">${p.number}</span><span class="preview-value">${p.date}</span><span class="preview-value">${p.taxType}</span><span class="preview-value">${p.reason}</span><span class="preview-value">${p.value} درهم</span><span class="preview-value"><span class="${statusClass}">${p.status}</span></span></div>`;
+                }
+            }
+            
+            var noticesHtml = '';
+            if (notices.length === 0) {
+                noticesHtml = '<div class="text-muted text-center py-3">لا توجد إخطارات ضريبية مسجلة</div>';
+            } else {
+                noticesHtml = '<div class="preview-item"><span class="preview-label"><strong>رقم الإخطار</strong></span><span class="preview-value"><strong>التاريخ</strong></span><span class="preview-value"><strong>النوع</strong></span><span class="preview-value"><strong>الموعد النهائي</strong></span><span class="preview-value"><strong>الحالة</strong></span></div>';
+                for (var i = 0; i < notices.length; i++) {
+                    var n = notices[i];
+                    var statusClass = n.status === 'تم الرد' ? 'status-paid' : (n.status === 'لم يتم الرد' ? 'status-pending' : 'status-objection');
+                    noticesHtml += `<div class="preview-item"><span class="preview-label">${n.number}</span><span class="preview-value">${n.date}</span><span class="preview-value">${n.type}</span><span class="preview-value">${n.deadline}</span><span class="preview-value"><span class="${statusClass}">${n.status}</span></span></div>`;
+                    if (n.details && n.details !== '—') {
+                        noticesHtml += `<div class="preview-item"><span class="preview-label">تفاصيل</span><span class="preview-value">${n.details}</span></div>`;
+                    }
+                }
+            }
+            
+            var previewHtml = `
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-building me-2"></i>بيانات الشركة الأساسية</h4>
+                    <div class="preview-item"><span class="preview-label">اسم الشركة (عربي)</span><span class="preview-value">${getFieldValue('companyNameAr')}</span></div>
+                    <div class="preview-item"><span class="preview-label">اسم الشركة (إنجليزي)</span><span class="preview-value">${getFieldValue('companyNameEn')}</span></div>
+                    <div class="preview-item"><span class="preview-label">الرقم الضريبي (TRN)</span><span class="preview-value">${getFieldValue('taxRegistrationNumber')}</span></div>
+                    <div class="preview-item"><span class="preview-label">رقم السجل التجاري</span><span class="preview-value">${getFieldValue('commercialLicense')}</span></div>
+                    <div class="preview-item"><span class="preview-label">الإمارة</span><span class="preview-value">${getFieldValue('emirate')}</span></div>
+                    <div class="preview-item"><span class="preview-label">جهة الاتصال</span><span class="preview-value">${getFieldValue('contactPerson')}</span></div>
+                    <div class="preview-item"><span class="preview-label">البريد الإلكتروني</span><span class="preview-value">${getFieldValue('clientEmail')}</span></div>
+                    <div class="preview-item"><span class="preview-label">رقم الهاتف</span><span class="preview-value">${getFieldValue('clientPhone')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-chart-pie me-2"></i>ملخص الغرامات والإخطارات</h4>
+                    <div class="preview-item"><span class="preview-label">إجمالي عدد الغرامات</span><span class="preview-value">${getFieldValue('totalPenalties')}</span></div>
+                    <div class="preview-item"><span class="preview-label">إجمالي قيمة الغرامات</span><span class="preview-value">${getFieldValue('totalPenaltiesValue', '0')} درهم</span></div>
+                    <div class="preview-item"><span class="preview-label">قيمة الغرامات المسددة</span><span class="preview-value">${getFieldValue('penaltiesPaid', '0')} درهم</span></div>
+                    <div class="preview-item"><span class="preview-label">قيمة الغرامات المستحقة</span><span class="preview-value">${getFieldValue('penaltiesDue', '0')} درهم</span></div>
+                    <div class="preview-item"><span class="preview-label">عدد الإخطارات المستلمة</span><span class="preview-value">${getFieldValue('totalNotices')}</span></div>
+                    <div class="preview-item"><span class="preview-label">الإخطارات التي تم الرد عليها</span><span class="preview-value">${getFieldValue('noticesResponded')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-money-bill-wave me-2"></i>قائمة الغرامات الضريبية</h4>
+                    ${penaltiesHtml}
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-envelope-open-text me-2"></i>قائمة الإخطارات الضريبية</h4>
+                    ${noticesHtml}
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-gavel me-2"></i>الاعتراضات والتقاضي</h4>
+                    <div class="preview-item"><span class="preview-label">حالة الاعتراض</span><span class="preview-value">${getFieldValue('hasObjection')}</span></div>
+                    ${getFieldValue('hasObjection') !== 'لا' ? `<div class="preview-item"><span class="preview-label">قيمة الغرامات المتنازع عليها</span><span class="preview-value">${getFieldValue('objectionValue', '0')} درهم</span></div>` : ''}
+                    ${getFieldValue('hasObjection') !== 'لا' ? `<div class="preview-item"><span class="preview-label">تفاصيل الاعتراضات</span><span class="preview-value">${getFieldValue('objectionDetails')}</span></div>` : ''}
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-clipboard-list me-2"></i>الإجراءات المتخذة</h4>
+                    <div class="preview-item"><span class="preview-label">الإجراءات التصحيحية</span><span class="preview-value">${getFieldValue('correctiveActions')}</span></div>
+                    <div class="preview-item"><span class="preview-label">الضوابط الداخلية</span><span class="preview-value">${getFieldValue('internalControls')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-info-circle me-2"></i>معلومات إضافية</h4>
+                    <div class="preview-item"><span class="preview-label">ملاحظات إضافية</span><span class="preview-value">${getFieldValue('additionalInfo')}</span></div>
+                </div>
+                
+                <div class="preview-card">
+                    <h4 style="color: #1e4a3b;"><i class="fas fa-signature me-2"></i>الإقرار والتوقيع</h4>
+                    <div class="preview-item"><span class="preview-label">اسم المقر</span><span class="preview-value">${getFieldValue('declarantName')}</span></div>
+                    <div class="preview-item"><span class="preview-label">المنصب</span><span class="preview-value">${getFieldValue('declarantPosition')}</span></div>
+                    <div class="preview-item"><span class="preview-label">التاريخ</span><span class="preview-value">${getFieldValue('declarationDate')}</span></div>
+                    <div class="preview-item"><span class="preview-label">حالة الإقرار</span><span class="preview-value">${document.getElementById('declarationCheck').checked ? 'تم الإقرار' : 'لم يتم الإقرار'}</span></div>
+                </div>
+                
+                <div class="preview-card text-center">
+                    <hr>
+                    <p style="color: #1e4a3b; font-weight: 600;"><i class="fas fa-check-circle me-2"></i>تم تعبئة استبيان الغرامات والإخطارات الضريبية بنجاح</p>
+                    <p class="text-muted small">تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG')}</p>
+                </div>
+            `;
+            document.getElementById('previewContent').innerHTML = previewHtml;
+        }
+        
+        function resetForm() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟')) {
+                location.reload();
+            }
+        }
+        
+        function exportToExcel() {
+            var companyName = getFieldValue('companyNameAr', 'شركة');
+            var penalties = getPenaltiesData();
+            var notices = getNoticesData();
+            
+            var excelData = [
+                ['استبيان الغرامات والإخطارات الضريبية - تكاليف (الإمارات)'],
+                ['تاريخ التقرير', new Date().toLocaleDateString('ar-EG')],
+                ['اسم الشركة', companyName],
+                ['الرقم الضريبي (TRN)', getFieldValue('taxRegistrationNumber')],
+                [],
+                ['1. بيانات الشركة الأساسية'],
+                ['اسم الشركة (عربي)', getFieldValue('companyNameAr')],
+                ['اسم الشركة (إنجليزي)', getFieldValue('companyNameEn')],
+                ['الرقم الضريبي (TRN)', getFieldValue('taxRegistrationNumber')],
+                ['رقم السجل التجاري', getFieldValue('commercialLicense')],
+                ['الإمارة', getFieldValue('emirate')],
+                ['جهة الاتصال', getFieldValue('contactPerson')],
+                ['البريد الإلكتروني', getFieldValue('clientEmail')],
+                ['رقم الهاتف', getFieldValue('clientPhone')],
+                [],
+                ['2. ملخص الغرامات والإخطارات'],
+                ['إجمالي عدد الغرامات', getFieldValue('totalPenalties')],
+                ['إجمالي قيمة الغرامات', getFieldValue('totalPenaltiesValue', '0') + ' درهم'],
+                ['قيمة الغرامات المسددة', getFieldValue('penaltiesPaid', '0') + ' درهم'],
+                ['قيمة الغرامات المستحقة', getFieldValue('penaltiesDue', '0') + ' درهم'],
+                ['عدد الإخطارات المستلمة', getFieldValue('totalNotices')],
+                ['الإخطارات التي تم الرد عليها', getFieldValue('noticesResponded')],
+                [],
+                ['3. قائمة الغرامات الضريبية'],
+                ['رقم الغرامة', 'تاريخ الإصدار', 'نوع الضريبة', 'سبب الغرامة', 'القيمة', 'حالة السداد']
+            ];
+            
+            for (var i = 0; i < penalties.length; i++) {
+                excelData.push([penalties[i].number, penalties[i].date, penalties[i].taxType, penalties[i].reason, penalties[i].value + ' درهم', penalties[i].status]);
+            }
+            
+            excelData.push([], ['4. قائمة الإخطارات الضريبية']);
+            excelData.push(['رقم الإخطار', 'التاريخ', 'نوع الإخطار', 'الموعد النهائي', 'الحالة', 'التفاصيل']);
+            
+            for (var i = 0; i < notices.length; i++) {
+                excelData.push([notices[i].number, notices[i].date, notices[i].type, notices[i].deadline, notices[i].status, notices[i].details]);
+            }
+            
+            excelData.push([], ['5. الاعتراضات والتقاضي']);
+            excelData.push(['حالة الاعتراض', getFieldValue('hasObjection')]);
+            if (getFieldValue('hasObjection') !== 'لا') {
+                excelData.push(['قيمة الغرامات المتنازع عليها', getFieldValue('objectionValue', '0') + ' درهم']);
+                excelData.push(['تفاصيل الاعتراضات', getFieldValue('objectionDetails')]);
+            }
+            
+            excelData.push([], ['6. الإجراءات المتخذة']);
+            excelData.push(['الإجراءات التصحيحية', getFieldValue('correctiveActions')]);
+            excelData.push(['الضوابط الداخلية', getFieldValue('internalControls')]);
+            
+            excelData.push([], ['7. معلومات إضافية']);
+            excelData.push(['ملاحظات إضافية', getFieldValue('additionalInfo')]);
+            
+            excelData.push([], ['8. الإقرار والتوقيع']);
+            excelData.push(['اسم المقر', getFieldValue('declarantName')]);
+            excelData.push(['المنصب', getFieldValue('declarantPosition')]);
+            excelData.push(['التاريخ', getFieldValue('declarationDate')]);
+            excelData.push(['حالة الإقرار', document.getElementById('declarationCheck').checked ? 'تم الإقرار' : 'لم يتم الإقرار']);
+            excelData.push([], ['للتواصل: tax@takalief.com | +971 4 567 8901'], ['www.takalief.com']);
+            
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet(excelData);
+            XLSX.utils.book_append_sheet(wb, ws, 'الغرامات والإخطارات');
+            XLSX.writeFile(wb, 'Tax_Penalties_Notices_' + companyName.replace(/\s/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
+            alert('تم تصدير استبيان Excel بنجاح!');
+        }
+        
+        async function exportToPDF(event) {
+            try {
+                var exportBtn = event.target;
+                var originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> جاري إعداد التقرير...';
+                exportBtn.disabled = true;
+                
+                var pdfContainer = document.getElementById('pdf-export-container');
+                pdfContainer.innerHTML = '';
+                pdfContainer.style.opacity = '1';
+                pdfContainer.style.position = 'absolute';
+                pdfContainer.style.top = '0';
+                pdfContainer.style.left = '0';
+                pdfContainer.style.zIndex = '9999';
+                
+                var companyName = getFieldValue('companyNameAr', 'غير محدد');
+                var clientName = getFieldValue('contactPerson', 'غير محدد');
+                var currentDate = new Date().toLocaleDateString('ar-EG');
+                var penalties = getPenaltiesData();
+                var notices = getNoticesData();
+                
+                var penaltiesRows = '';
+                for (var i = 0; i < penalties.length; i++) {
+                    var p = penalties[i];
+                    penaltiesRows += `<tr><td>${p.number}</td><td>${p.date}</td><td>${p.taxType}</td><td>${p.reason}</td><td>${p.value} درهم</td><td>${p.status}</td></tr>`;
+                }
+                
+                var noticesRows = '';
+                for (var i = 0; i < notices.length; i++) {
+                    var n = notices[i];
+                    noticesRows += `<tr><td>${n.number}</td><td>${n.date}</td><td>${n.type}</td><td>${n.deadline}</td><td>${n.status}</td><td>${n.details}</td></tr>`;
+                }
+                
+                var fullHtml = `
+                    <div class="pdf-cover">
+                        <h1>استبيان الغرامات والإخطارات الضريبية</h1>
+                        <h3>Tax Penalties & Notices Questionnaire - UAE</h3>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 30px;">
+                            <p><i class="fas fa-building me-2"></i>الشركة: ${companyName}</p>
+                            <p><i class="fas fa-id-card me-2"></i>الرقم الضريبي: ${getFieldValue('taxRegistrationNumber')}</p>
+                            <p><i class="fas fa-user me-2"></i>جهة الاتصال: ${clientName}</p>
+                            <p><i class="fas fa-calendar me-2"></i>تاريخ التقرير: ${currentDate}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="pdf-section-title">1. بيانات الشركة الأساسية</h2>
+                        <table class="pdf-table"><thead> <tr><th>البيان</th><th>القيمة</th></tr> </thead>
+                            <tbody>
+                                <tr><td>اسم الشركة (عربي)</td><td>${getFieldValue('companyNameAr')}</td></tr>
+                                <tr><td>اسم الشركة (إنجليزي)</td><td>${getFieldValue('companyNameEn')}</td></tr>
+                                <tr><td>الرقم الضريبي (TRN)</td><td>${getFieldValue('taxRegistrationNumber')}</td></tr>
+                                <tr><td>رقم السجل التجاري</td><td>${getFieldValue('commercialLicense')}</td></tr>
+                                <tr><td>الإمارة</td><td>${getFieldValue('emirate')}</td></tr>
+                                <tr><td>جهة الاتصال</td><td>${getFieldValue('contactPerson')}</td></tr>
+                                <tr><td>البريد الإلكتروني</td><td>${getFieldValue('clientEmail')}</td></tr>
+                                <tr><td>رقم الهاتف</td><td>${getFieldValue('clientPhone')}</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">2. ملخص الغرامات والإخطارات</h2>
+                        <table class="pdf-table"><thead> <tr><th>البيان</th><th>القيمة</th></tr> </thead>
+                            <tbody>
+                                <tr><td>إجمالي عدد الغرامات</td><td>${getFieldValue('totalPenalties')}</td></tr>
+                                <tr><td>إجمالي قيمة الغرامات</td><td>${getFieldValue('totalPenaltiesValue', '0')} درهم</td></tr>
+                                <tr><td>قيمة الغرامات المسددة</td><td>${getFieldValue('penaltiesPaid', '0')} درهم</td></tr>
+                                <tr><td>قيمة الغرامات المستحقة</td><td>${getFieldValue('penaltiesDue', '0')} درهم</td></tr>
+                                <tr><td>عدد الإخطارات المستلمة</td><td>${getFieldValue('totalNotices')}</td></tr>
+                                <tr><td>الإخطارات التي تم الرد عليها</td><td>${getFieldValue('noticesResponded')}</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">3. قائمة الغرامات الضريبية</h2>
+                        <table class="pdf-table"><thead> <tr><th>رقم الغرامة</th><th>التاريخ</th><th>نوع الضريبة</th><th>السبب</th><th>القيمة</th><th>الحالة</th></tr> </thead>
+                            <tbody>${penaltiesRows || '<tr><td colspan="6" class="text-center">لا توجد غرامات مسجلة</td></tr>'}</tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">4. قائمة الإخطارات الضريبية</h2>
+                        <table class="pdf-table"><thead> <tr><th>رقم الإخطار</th><th>التاريخ</th><th>النوع</th><th>الموعد النهائي</th><th>الحالة</th><th>التفاصيل</th></tr> </thead>
+                            <tbody>${noticesRows || '<tr><td colspan="6" class="text-center">لا توجد إخطارات مسجلة</td></tr>'}</tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">5. الاعتراضات والتقاضي</h2>
+                        <table class="pdf-table"><thead> <tr><th>البيان</th><th>القيمة</th></tr> </thead>
+                            <tbody>
+                                <tr><td>حالة الاعتراض</td><td>${getFieldValue('hasObjection')}</td></tr>
+                                ${getFieldValue('hasObjection') !== 'لا' ? `<tr><td>قيمة الغرامات المتنازع عليها</td><td>${getFieldValue('objectionValue', '0')} درهم</td></tr>` : ''}
+                                ${getFieldValue('hasObjection') !== 'لا' ? `<tr><td>تفاصيل الاعتراضات</td><td>${getFieldValue('objectionDetails')}</td></tr>` : ''}
+                            </tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">6. الإجراءات المتخذة</h2>
+                        <table class="pdf-table"><thead> <tr><th>البيان</th><th>القيمة</th></tr> </thead>
+                            <tbody>
+                                <tr><td>الإجراءات التصحيحية</td><td>${getFieldValue('correctiveActions')}</td></tr>
+                                <tr><td>الضوابط الداخلية</td><td>${getFieldValue('internalControls')}</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">7. معلومات إضافية</h2>
+                        <table class="pdf-table"><thead> <tr><th>البيان</th><th>القيمة</th></tr> </thead>
+                            <tbody>
+                                <tr><td>ملاحظات إضافية</td><td>${getFieldValue('additionalInfo')}</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2 class="pdf-section-title">8. الإقرار والتوقيع</h2>
+                        <table class="pdf-table"><thead> <tr><th>البيان</th><th>القيمة</th></tr> </thead>
+                            <tbody>
+                                <tr><td>اسم المقر</td><td>${getFieldValue('declarantName')}</td></tr>
+                                <tr><td>المنصب</td><td>${getFieldValue('declarantPosition')}</td></tr>
+                                <tr><td>التاريخ</td><td>${getFieldValue('declarationDate')}</td></tr>
+                                <tr><td>حالة الإقرار</td><td>${document.getElementById('declarationCheck').checked ? 'تم الإقرار' : 'لم يتم الإقرار'}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="page-break-before: always; margin-top: 40px;">
+                        <div class="pdf-footer">
+                            <div style="font-size: 20px; font-weight: 700; color: #52b788;">تكاليف - حلول أعمال ذكية</div>
+                            <div>دبي - الإمارات العربية المتحدة | +971 4 567 8901 | tax@takalief.com</div>
+                            <hr style="width: 150px; margin: 15px auto;">
+                            <p>تم تعبئة هذا الاستبيان لتقييم الغرامات والإخطارات الضريبية للشركة</p>
+                            <p>تاريخ الإصدار: ${currentDate}</p>
+                            <p style="margin-top: 20px;">توقيع العميل: _________________________</p>
+                            <p>جميع الحقوق محفوظة © 2026</p>
+                        </div>
+                    </div>
+                `;
+                
+                var pdfWrapper = document.createElement('div');
+                pdfWrapper.className = 'pdf-wrapper';
+                pdfWrapper.innerHTML = fullHtml;
+                pdfContainer.appendChild(pdfWrapper);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                var canvas = await html2canvas(pdfContainer, { scale: 2, backgroundColor: '#ffffff', logging: false });
+                var imgData = canvas.toDataURL('image/png');
+                var imgWidth = 210;
+                var pageHeight = 297;
+                var imgHeight = (canvas.height * imgWidth) / canvas.width;
+                var heightLeft = imgHeight;
+                var position = 0;
+                
+                var pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+                heightLeft -= pageHeight;
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+                    heightLeft -= pageHeight;
+                }
+                
+                pdf.save('Tax_Penalties_Notices_' + companyName.replace(/[^\u0600-\u06FFa-zA-Z0-9]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.pdf');
+                
+                pdfContainer.innerHTML = '';
+                pdfContainer.style.opacity = '0';
+                pdfContainer.style.position = 'fixed';
+                pdfContainer.style.top = '-99999px';
+                
+                exportBtn.innerHTML = originalText;
+                exportBtn.disabled = false;
+                alert('تم تصدير استبيان PDF بنجاح!');
+            } catch (error) {
+                alert('حدث خطأ: ' + error.message);
+                var exportBtn = event.target;
+                exportBtn.innerHTML = '<i class="fas fa-file-pdf me-2"></i> تصدير التقرير (PDF)';
+                exportBtn.disabled = false;
+            }
+        }
+        
+        window.onload = function() {
+            refreshPreview();
+            toggleObjectionFields();
+        };
+    </script>
+</body>
+</html>
